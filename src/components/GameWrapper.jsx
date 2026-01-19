@@ -7,6 +7,16 @@ function GameWrapper() {
   const containerRef = useRef(null)
 
   useEffect(() => {
+    // Fix viewport height for mobile browsers to account for address bar
+    const setVH = () => {
+      const vh = window.innerHeight * 0.01
+      document.documentElement.style.setProperty('--vh', `${vh}px`)
+    }
+
+    setVH()
+    window.addEventListener('resize', setVH)
+    window.addEventListener('orientationchange', setVH)
+
     if (containerRef.current && !gameRef.current) {
       const config = {
         ...gameConfig,
@@ -17,7 +27,16 @@ function GameWrapper() {
       // Enable fullscreen on mobile when user taps
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
       if (isMobile) {
+        // Scroll to hide address bar
+        setTimeout(() => {
+          window.scrollTo(0, 1)
+        }, 100)
+
         const enterFullscreen = () => {
+          // Scroll to hide address bar first
+          window.scrollTo(0, 1)
+
+          // Then enter fullscreen
           if (gameRef.current && gameRef.current.scale) {
             gameRef.current.scale.startFullscreen()
           }
@@ -30,6 +49,9 @@ function GameWrapper() {
     }
 
     return () => {
+      window.removeEventListener('resize', setVH)
+      window.removeEventListener('orientationchange', setVH)
+
       if (gameRef.current) {
         gameRef.current.destroy(true)
         gameRef.current = null
