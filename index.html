@@ -76,11 +76,18 @@
         font-size: 14px;
         z-index: 10000;
         animation: pulse 2s infinite;
-        pointer-events: none;
+        pointer-events: auto;
         display: none;
+        cursor: pointer;
       }
       .tap-message.show {
         display: block;
+      }
+      /* Hide tap message on desktop */
+      @media (min-width: 768px) {
+        .tap-message {
+          display: none !important;
+        }
       }
       @keyframes pulse {
         0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }

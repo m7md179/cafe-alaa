@@ -76,10 +76,13 @@ function GameWrapper() {
         }
 
         // Try to enter fullscreen on first interaction
-        const handleFirstTouch = () => {
+        const handleFirstTouch = (e) => {
+          e.preventDefault()
+
           // Hide tap message
           if (tapMessage) {
             tapMessage.classList.remove('show')
+            tapMessage.style.display = 'none'
           }
 
           enterFullscreen()
@@ -87,10 +90,19 @@ function GameWrapper() {
           // Remove listeners after first touch
           containerRef.current?.removeEventListener('click', handleFirstTouch)
           containerRef.current?.removeEventListener('touchstart', handleFirstTouch)
+          if (tapMessage) {
+            tapMessage.removeEventListener('click', handleFirstTouch)
+            tapMessage.removeEventListener('touchstart', handleFirstTouch)
+          }
         }
 
+        // Add listeners to both container and tap message
         containerRef.current.addEventListener('click', handleFirstTouch)
-        containerRef.current.addEventListener('touchstart', handleFirstTouch)
+        containerRef.current.addEventListener('touchstart', handleFirstTouch, { passive: false })
+        if (tapMessage) {
+          tapMessage.addEventListener('click', handleFirstTouch)
+          tapMessage.addEventListener('touchstart', handleFirstTouch, { passive: false })
+        }
       }
     }
 
