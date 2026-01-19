@@ -88,6 +88,9 @@ export default class StreetScene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys()
     this.wasd = this.input.keyboard.addKeys('W,A,S,D')
 
+    // Mobile controls
+    this.createMobileControls()
+
     // Intro text
     this.introText = this.add.text(width / 2, height / 2 - 100,
       "It's your birthday...\nsomething special awaits", {
@@ -101,9 +104,10 @@ export default class StreetScene extends Phaser.Scene {
     .setScrollFactor(0)
     .setAlpha(0)
 
-    // Controls hint
+    // Controls hint (hide on mobile)
+    const isMobile = this.sys.game.device.os.android || this.sys.game.device.os.iOS || this.sys.game.device.os.iPad || this.sys.game.device.os.iPhone
     this.controlsHint = this.add.text(width / 2, height - 30,
-      'Use ARROW KEYS or WASD to move', {
+      isMobile ? 'Use on-screen controls to move' : 'Use ARROW KEYS or WASD to move', {
       fontFamily: '"Press Start 2P"',
       fontSize: '10px',
       fill: '#A8B5A0'
@@ -208,6 +212,73 @@ export default class StreetScene extends Phaser.Scene {
     lightCone.setScrollFactor(1)
   }
 
+  createMobileControls() {
+    const width = this.cameras.main.width
+    const height = this.cameras.main.height
+
+    // Only create controls on mobile devices
+    const isMobile = this.sys.game.device.os.android || this.sys.game.device.os.iOS || this.sys.game.device.os.iPad || this.sys.game.device.os.iPhone
+    if (!isMobile) return
+
+    // Virtual buttons state
+    this.mobileControls = {
+      left: false,
+      right: false
+    }
+
+    // Left button
+    const leftBtn = this.add.circle(80, height - 80, 40, 0x3d3d3d, 0.5)
+    leftBtn.setScrollFactor(0)
+    leftBtn.setDepth(1000)
+    leftBtn.setInteractive()
+
+    const leftArrow = this.add.text(80, height - 80, '◄', {
+      fontSize: '32px',
+      fill: '#FFF8F0'
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(1001)
+
+    leftBtn.on('pointerdown', () => {
+      this.mobileControls.left = true
+      leftBtn.setAlpha(0.8)
+    })
+
+    leftBtn.on('pointerup', () => {
+      this.mobileControls.left = false
+      leftBtn.setAlpha(0.5)
+    })
+
+    leftBtn.on('pointerout', () => {
+      this.mobileControls.left = false
+      leftBtn.setAlpha(0.5)
+    })
+
+    // Right button
+    const rightBtn = this.add.circle(180, height - 80, 40, 0x3d3d3d, 0.5)
+    rightBtn.setScrollFactor(0)
+    rightBtn.setDepth(1000)
+    rightBtn.setInteractive()
+
+    const rightArrow = this.add.text(180, height - 80, '►', {
+      fontSize: '32px',
+      fill: '#FFF8F0'
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(1001)
+
+    rightBtn.on('pointerdown', () => {
+      this.mobileControls.right = true
+      rightBtn.setAlpha(0.8)
+    })
+
+    rightBtn.on('pointerup', () => {
+      this.mobileControls.right = false
+      rightBtn.setAlpha(0.5)
+    })
+
+    rightBtn.on('pointerout', () => {
+      this.mobileControls.right = false
+      rightBtn.setAlpha(0.5)
+    })
+  }
+
   toggleWalkFrame() {
     if (this.player.isMoving) {
       this.player.walkFrame = this.player.walkFrame === 1 ? 2 : 1
@@ -220,8 +291,12 @@ export default class StreetScene extends Phaser.Scene {
   update() {
     const speed = 150
 
+    // Check mobile controls
+    const mobileLeft = this.mobileControls && this.mobileControls.left
+    const mobileRight = this.mobileControls && this.mobileControls.right
+
     // Movement
-    if (this.cursors.left.isDown || this.wasd.A.isDown) {
+    if (this.cursors.left.isDown || this.wasd.A.isDown || mobileLeft) {
       this.player.setVelocityX(-speed)
       this.player.direction = 'left'
       if (!this.player.isMoving) {
@@ -229,7 +304,7 @@ export default class StreetScene extends Phaser.Scene {
         this.player.setScale(this.walkScale)
         this.player.isMoving = true
       }
-    } else if (this.cursors.right.isDown || this.wasd.D.isDown) {
+    } else if (this.cursors.right.isDown || this.wasd.D.isDown || mobileRight) {
       this.player.setVelocityX(speed)
       this.player.direction = 'right'
       if (!this.player.isMoving) {

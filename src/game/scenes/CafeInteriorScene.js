@@ -56,6 +56,9 @@ export default class CafeInteriorScene extends Phaser.Scene {
     this.wasd = this.input.keyboard.addKeys('W,A,S,D')
     this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
 
+    // Mobile controls
+    this.createMobileControls()
+
     // Prompt text
     this.promptText = this.add.text(width / 2, this.cafeBox.y + 80, 'Press SPACE to order', {
       fontFamily: '"Press Start 2P"',
@@ -372,6 +375,90 @@ export default class CafeInteriorScene extends Phaser.Scene {
     }
   }
 
+  createMobileControls() {
+    const width = this.cameras.main.width
+    const height = this.cameras.main.height
+
+    // Only create controls on mobile devices
+    const isMobile = this.sys.game.device.os.android || this.sys.game.device.os.iOS || this.sys.game.device.os.iPad || this.sys.game.device.os.iPhone
+    if (!isMobile) return
+
+    // Virtual buttons state
+    this.mobileControls = {
+      left: false,
+      right: false,
+      up: false,
+      down: false,
+      action: false
+    }
+
+    // D-pad background
+    const dpadSize = 50
+    const dpadX = 100
+    const dpadY = height - 100
+
+    // Up button
+    const upBtn = this.add.circle(dpadX, dpadY - dpadSize, 35, 0x3d3d3d, 0.5)
+    upBtn.setScrollFactor(0).setDepth(1000).setInteractive()
+    this.add.text(dpadX, dpadY - dpadSize, '▲', {
+      fontSize: '24px',
+      fill: '#FFF8F0'
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(1001)
+
+    upBtn.on('pointerdown', () => { this.mobileControls.up = true; upBtn.setAlpha(0.8) })
+    upBtn.on('pointerup', () => { this.mobileControls.up = false; upBtn.setAlpha(0.5) })
+    upBtn.on('pointerout', () => { this.mobileControls.up = false; upBtn.setAlpha(0.5) })
+
+    // Down button
+    const downBtn = this.add.circle(dpadX, dpadY + dpadSize, 35, 0x3d3d3d, 0.5)
+    downBtn.setScrollFactor(0).setDepth(1000).setInteractive()
+    this.add.text(dpadX, dpadY + dpadSize, '▼', {
+      fontSize: '24px',
+      fill: '#FFF8F0'
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(1001)
+
+    downBtn.on('pointerdown', () => { this.mobileControls.down = true; downBtn.setAlpha(0.8) })
+    downBtn.on('pointerup', () => { this.mobileControls.down = false; downBtn.setAlpha(0.5) })
+    downBtn.on('pointerout', () => { this.mobileControls.down = false; downBtn.setAlpha(0.5) })
+
+    // Left button
+    const leftBtn = this.add.circle(dpadX - dpadSize, dpadY, 35, 0x3d3d3d, 0.5)
+    leftBtn.setScrollFactor(0).setDepth(1000).setInteractive()
+    this.add.text(dpadX - dpadSize, dpadY, '◄', {
+      fontSize: '24px',
+      fill: '#FFF8F0'
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(1001)
+
+    leftBtn.on('pointerdown', () => { this.mobileControls.left = true; leftBtn.setAlpha(0.8) })
+    leftBtn.on('pointerup', () => { this.mobileControls.left = false; leftBtn.setAlpha(0.5) })
+    leftBtn.on('pointerout', () => { this.mobileControls.left = false; leftBtn.setAlpha(0.5) })
+
+    // Right button
+    const rightBtn = this.add.circle(dpadX + dpadSize, dpadY, 35, 0x3d3d3d, 0.5)
+    rightBtn.setScrollFactor(0).setDepth(1000).setInteractive()
+    this.add.text(dpadX + dpadSize, dpadY, '►', {
+      fontSize: '24px',
+      fill: '#FFF8F0'
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(1001)
+
+    rightBtn.on('pointerdown', () => { this.mobileControls.right = true; rightBtn.setAlpha(0.8) })
+    rightBtn.on('pointerup', () => { this.mobileControls.right = false; rightBtn.setAlpha(0.5) })
+    rightBtn.on('pointerout', () => { this.mobileControls.right = false; rightBtn.setAlpha(0.5) })
+
+    // Action button (for ordering/sitting)
+    const actionBtn = this.add.circle(width - 80, height - 100, 40, 0xD4735E, 0.6)
+    actionBtn.setScrollFactor(0).setDepth(1000).setInteractive()
+    this.add.text(width - 80, height - 100, 'A', {
+      fontFamily: '"Press Start 2P"',
+      fontSize: '20px',
+      fill: '#FFF8F0'
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(1001)
+
+    actionBtn.on('pointerdown', () => { this.mobileControls.action = true; actionBtn.setAlpha(0.9) })
+    actionBtn.on('pointerup', () => { this.mobileControls.action = false; actionBtn.setAlpha(0.6) })
+    actionBtn.on('pointerout', () => { this.mobileControls.action = false; actionBtn.setAlpha(0.6) })
+  }
+
   getIdleTexture(direction) {
     switch(direction) {
       case 'left': return 'alaa-idle-left'
@@ -395,12 +482,19 @@ export default class CafeInteriorScene extends Phaser.Scene {
     let isMovingNow = false
     const box = this.cafeBox
 
+    // Check mobile controls
+    const mobileLeft = this.mobileControls && this.mobileControls.left
+    const mobileRight = this.mobileControls && this.mobileControls.right
+    const mobileUp = this.mobileControls && this.mobileControls.up
+    const mobileDown = this.mobileControls && this.mobileControls.down
+    const mobileAction = this.mobileControls && this.mobileControls.action
+
     // Horizontal movement
-    if (this.cursors.left.isDown || this.wasd.A.isDown) {
+    if (this.cursors.left.isDown || this.wasd.A.isDown || mobileLeft) {
       this.player.setVelocityX(-speed)
       this.player.direction = 'left'
       isMovingNow = true
-    } else if (this.cursors.right.isDown || this.wasd.D.isDown) {
+    } else if (this.cursors.right.isDown || this.wasd.D.isDown || mobileRight) {
       this.player.setVelocityX(speed)
       this.player.direction = 'right'
       isMovingNow = true
@@ -409,11 +503,11 @@ export default class CafeInteriorScene extends Phaser.Scene {
     }
 
     // Vertical movement
-    if (this.cursors.up.isDown || this.wasd.W.isDown) {
+    if (this.cursors.up.isDown || this.wasd.W.isDown || mobileUp) {
       this.player.setVelocityY(-speed)
       if (!isMovingNow) this.player.direction = 'up'
       isMovingNow = true
-    } else if (this.cursors.down.isDown || this.wasd.S.isDown) {
+    } else if (this.cursors.down.isDown || this.wasd.S.isDown || mobileDown) {
       this.player.setVelocityY(speed)
       if (!isMovingNow) this.player.direction = 'down'
       isMovingNow = true
@@ -485,15 +579,29 @@ export default class CafeInteriorScene extends Phaser.Scene {
       )
 
       if (distToTable < 70) {
-        this.promptText.setText('Press SPACE to sit')
+        const isMobile = this.sys.game.device.os.android || this.sys.game.device.os.iOS || this.sys.game.device.os.iPad || this.sys.game.device.os.iPhone
+        this.promptText.setText(isMobile ? 'Press A to sit' : 'Press SPACE to sit')
         this.promptText.setPosition(this.tableZone.x, this.tableZone.y - 60)
         this.promptText.setAlpha(1)
 
-        if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
+        if (Phaser.Input.Keyboard.JustDown(this.spaceKey) || this.checkMobileAction()) {
           this.sitAtTable()
         }
       }
     }
+  }
+
+  checkMobileAction() {
+    if (!this.mobileControls) return false
+
+    // Check if action was just pressed (not held)
+    if (this.mobileControls.action && !this.lastMobileAction) {
+      this.lastMobileAction = true
+      return true
+    } else if (!this.mobileControls.action) {
+      this.lastMobileAction = false
+    }
+    return false
   }
 
   openMenu() {
