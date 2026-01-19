@@ -158,26 +158,13 @@ export default class LetterScene extends Phaser.Scene {
 
 Happy Birthday!
 
-I've wanted to make something special on
-your birthday but sadly was not able to
-finish it on time.
+I've wanted to make something special on your birthday but sadly was not able to finish it on time.
 
-You seem like an amazing person and I want
-to get to know you more, but I'm not the
-type to talk a lot or know how to start a
-conversation, so I was really hoping this
-would be a good way to start to know you
-more.
+You seem like an amazing person and I want to get to know you more, but I'm not the type to talk a lot or know how to start a conversation, so I was really hoping this would be a good way to start to know you more.
 
-I may have not finished it on time but I
-want to keep updating and adding to it as
-I get to know you more.
+I may have not finished it on time but I want to keep updating and adding to it as I get to know you more.
 
-Hope you enjoyed this little walk, and hope
-we'll be in touch more (and I hope you would
-be starting conversations because I'm too
-scared of both annoying you and women in
-general).
+Hope you enjoyed this little walk, and hope we'll be in touch more (and I hope you would be starting conversations because I'm too scared of both annoying you and women in general).
 
 With warmth and admiration,
 Someone who thinks you're amazing ♥`
