@@ -185,10 +185,10 @@ Someone who thinks you're amazing ♥`
     // Typewriter effect
     this.typewriterText = this.add.text(-320, -220, '', {
       fontFamily: 'Georgia, serif',
-      fontSize: '14px',
+      fontSize: '13px',
       fill: '#3E2723',
-      lineSpacing: 8,
-      wordWrap: { width: 640 }
+      lineSpacing: 6,
+      wordWrap: { width: 620 }
     })
     this.letterContainer.add(this.typewriterText)
 
