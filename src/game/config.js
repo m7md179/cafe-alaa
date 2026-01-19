@@ -37,7 +37,10 @@ export const gameConfig = {
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    fullscreenTarget: 'game-container',
+    width: 1280,
+    height: 720,
+    fullscreenTarget: document.body,
+    expandParent: true,
     orientation: Phaser.Scale.LANDSCAPE
   },
   backgroundColor: '#1a1a2e'
