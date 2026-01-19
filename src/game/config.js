@@ -36,7 +36,9 @@ export const gameConfig = {
   ],
   scale: {
     mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    fullscreenTarget: 'game-container',
+    orientation: Phaser.Scale.LANDSCAPE
   },
   backgroundColor: '#1a1a2e'
 }
